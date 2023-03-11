@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${PGUSER}
+    password: ${PGPASSWORD}
+  liquibase:
+    enabled: true
+
+bot:
+  name: ${BOT_NAME}
+  token: ${BOT_TOKEN}
