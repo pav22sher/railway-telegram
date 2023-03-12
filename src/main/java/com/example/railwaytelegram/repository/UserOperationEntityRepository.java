@@ -2,17 +2,22 @@ package com.example.railwaytelegram.repository;
 
 import com.example.railwaytelegram.entity.UserOperationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
 public interface UserOperationEntityRepository extends JpaRepository<UserOperationEntity, Long> {
-    List<UserOperationEntity> findAllByUserId(Long userId);
+    @Query(value = """
+            SELECT uoe.*
+            FROM user_operation_entity uoe
+            WHERE uoe.user_entity_id = :userId
+            ORDER BY uoe.created_at DESC
+            LIMIT 5
+            """, nativeQuery = true)
+    List<UserOperationEntity> findTop10ByUserId(Long userId);
 
     @Query("""
             SELECT COALESCE(SUM(uoe.sum), 0)
@@ -36,15 +41,4 @@ public interface UserOperationEntityRepository extends JpaRepository<UserOperati
             AND uoe.sum < 0
             """)
     BigDecimal getOutSum(Long userId);
-
-    @Transactional
-    @Modifying
-    @Query("""
-            DELETE FROM userOperationEntity uoe
-            WHERE uoe.user.id = :userId
-            AND uoe.id = (SELECT MAX(userOpEn.id)
-            FROM userOperationEntity userOpEn
-            WHERE userOpEn.user.id = :userId)
-            """)
-    void deleteLast(Long userId);
 }
