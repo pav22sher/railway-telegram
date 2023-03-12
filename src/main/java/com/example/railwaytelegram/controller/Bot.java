@@ -1,6 +1,9 @@
 package com.example.railwaytelegram.controller;
 
+import com.example.railwaytelegram.entity.UserEntity;
+import com.example.railwaytelegram.repository.UserEntityRepository;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -11,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -21,6 +25,9 @@ public class Bot extends TelegramLongPollingBot {
 
     @Value("${bot.token}")
     private String botToken;
+
+    @Autowired
+    private UserEntityRepository userEntityRepository;
 
     @Override
     public String getBotUsername() {
@@ -39,16 +46,34 @@ public class Bot extends TelegramLongPollingBot {
         if (msg != null && msg.hasText()) {
             User user = msg.getFrom();
             Long userId = user.getId();
+            createOrUpdateUser(user);
             String msgText = msg.getText();
             if (msgText.equals("/start")) {
                 SendMessage message = new SendMessage();
                 message.setChatId(userId);
                 message.setText("Нажмите на кнопку");
                 message.setReplyMarkup(new InlineKeyboardMarkup(List.of(List.of(
-                        InlineKeyboardButton.builder().text("Открыть").callbackData("Open").build()
+                        InlineKeyboardButton.builder()
+                                .text("Открыть")
+                                .url("https://pav22sher.github.io/react-app/")
+                                .build()
                 ))));
                 execute(message);
             }
         }
+    }
+
+    private void createOrUpdateUser(User user) {
+        Long userId = user.getId();
+        UserEntity entity = userEntityRepository.findById(userId).orElse(null);
+        if(entity == null) {
+            entity = new UserEntity();
+            entity.setId(userId);
+            entity.setStartedAt(LocalDateTime.now());
+        }
+        entity.setFirstName(user.getFirstName());
+        entity.setLastName(user.getLastName());
+        entity.setUserName(entity.getUserName());
+        userEntityRepository.saveAndFlush(entity);
     }
 }
