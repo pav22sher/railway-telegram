@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin(origins = "https://pav22sher.github.io/react-app")
 @RestController
 @RequestMapping("/api")
 public class ReactController {
