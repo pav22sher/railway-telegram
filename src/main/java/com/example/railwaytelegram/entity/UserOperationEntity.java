@@ -9,6 +9,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Финансовые операции пользователя
+ */
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)

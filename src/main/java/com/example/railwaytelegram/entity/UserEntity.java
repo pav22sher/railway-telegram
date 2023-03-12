@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+/**
+ * Пользователь
+ */
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
