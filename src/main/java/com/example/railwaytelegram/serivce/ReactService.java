@@ -38,7 +38,7 @@ public class ReactService {
     }
 
     public List<OperationHistoryDto> getOperationHistory(Long userId) {
-        List<UserOperationEntity> operations = userOperationEntityRepository.findTop10ByUserId(userId);
+        List<UserOperationEntity> operations = userOperationEntityRepository.findTop5ByUserId(userId);
         return operations.stream().map(OperationHistoryDto::new).toList();
     }
 }

@@ -17,7 +17,7 @@ public interface UserOperationEntityRepository extends JpaRepository<UserOperati
             ORDER BY uoe.created_at DESC
             LIMIT 5
             """, nativeQuery = true)
-    List<UserOperationEntity> findTop10ByUserId(Long userId);
+    List<UserOperationEntity> findTop5ByUserId(Long userId);
 
     @Query("""
             SELECT COALESCE(SUM(uoe.sum), 0)
